@@ -1,27 +1,9 @@
-# Railway-specific configuration
-$schema: https://railway.app/railway.schema.json
-
-# Build configuration
-build:
-  builder: DOCKER
-  dockerfilePath: Dockerfile
-
-# Deployment configuration  
-deploy:
-  startCommand: npm start
-  healthcheckPath: /api/health
-  
-# Environment variables
-environment:
-  NODE_ENV: production
-  PORT: 3000
-
-# Resource limits
-resources:
-  memory: 512MB
-  cpu: 0.5
-
-# Auto-scaling configuration
-scaling:
-  minReplicas: 1
-  maxReplicas: 3
+{
+  "build": {
+    "builder": "DOCKERFILE"
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "healthcheckPath": "/api/health"
+  }
+}

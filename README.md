@@ -4,6 +4,28 @@
 
 Bu proje, portföyünüzdeki şirketlerin haberlerini otomatik olarak takip etmek için geliştirilmiş bir REST API'sidir.
 
+## 🚀 Hızlı Başlangıç
+
+### Otomatik Kurulum
+```bash
+# Mac/Linux
+chmod +x setup.sh && ./setup.sh
+
+# Windows
+setup.bat
+
+# Veya npm ile
+npm run setup
+```
+
+### Manuel Kurulum
+```bash
+git clone https://github.com/egeaydin1/RSS-Feed-Analizer.git
+cd RSS-Feed-Analizer
+npm install
+npm start
+```
+
 ## 🌟 Özellikler
 
 - ✅ **8 farklı şirketin** haberlerini takip
@@ -27,229 +49,149 @@ Bu proje, portföyünüzdeki şirketlerin haberlerini otomatik olarak takip etme
 | Rigetti Computing | RGTI | Quantum Computing |
 | Pony AI Inc | PONY | Automotive |
 
-## 🚀 Kurulum
-
-### Yerel Geliştirme
-
-```bash
-# Projeyi klonla
-git clone https://github.com/your-username/RSS-Feed-Analizer.git
-cd RSS-Feed-Analizer
-
-# Dependencies yükle
-npm install
-
-# Geliştirme modunda başlat
-npm run dev
-
-# Veya production modunda
-npm start
-```
-
-### Docker ile Çalıştırma
-
-```bash
-# Docker image build et
-docker build -t rss-feed-analyzer .
-
-# Container çalıştır
-docker run -p 3000:3000 rss-feed-analyzer
-```
-
 ## 📡 API Endpoints
 
-### Temel Endpoint'ler
-
-```http
-GET /                           # API dokümantasyonu
-GET /api/health                 # Sistem durumu
-GET /api/companies              # Şirket listesi
-GET /api/sectors                # Sektör listesi
-```
-
-### Haber Endpoint'leri
-
-```http
-GET /api/news/:company          # Şirket haberleri
-GET /api/news/all               # Tüm şirket haberleri
-GET /api/sectors/:sector        # Sektör haberleri
-GET /api/search/:query          # Özel arama
-GET /api/feed/:company          # RSS XML feed
-```
-
-### Parametreler
-
-| Parametre | Açıklama | Default | Max |
-|-----------|----------|---------|-----|
-| `limit` | Haber sayısı | 10 | 50 |
-| `format` | Çıktı formatı (json/xml) | json | - |
-| `lang` | Dil tercihi | tr | - |
-
-## 🔧 Kullanım Örnekleri
-
-### JavaScript/Node.js
-
-```javascript
-// NVIDIA haberlerini çek
-const response = await fetch('http://localhost:3000/api/news/nvidia?limit=5');
-const data = await response.json();
-
-console.log(data.news);
-```
-
-### cURL
-
+### Temel Kullanım
 ```bash
-# Tüm şirket haberleri
-curl "http://localhost:3000/api/news/all?limit=10"
+# API dokümantasyonu
+curl http://localhost:3000/
+
+# Tüm şirketlerin haberleri  
+curl http://localhost:3000/api/news/all?limit=10
+
+# NVIDIA haberleri
+curl http://localhost:3000/api/news/nvidia?limit=5
 
 # Quantum sektörü haberleri
-curl "http://localhost:3000/api/sectors/quantum"
+curl http://localhost:3000/api/sectors/quantum
 
 # RSS feed formatında
-curl "http://localhost:3000/api/feed/nvidia"
+curl http://localhost:3000/api/feed/nvidia
 ```
 
-### Python
+### JavaScript Örneği
+```javascript
+// Tüm şirketlerin son haberlerini çek
+async function getLatestNews() {
+  const response = await fetch('http://localhost:3000/api/news/all?limit=5');
+  const data = await response.json();
+  
+  console.log(`📰 ${data.totalNews} haber bulundu`);
+  
+  data.news.forEach(news => {
+    console.log(`🏢 ${news.companySymbol}: ${news.title}`);
+    console.log(`🔗 ${news.link}\n`);
+  });
+}
 
-```python
-import requests
-
-# API'dan veri çek
-response = requests.get('http://localhost:3000/api/news/nvidia')
-data = response.json()
-
-for news in data['news']:
-    print(f"📰 {news['title']}")
-    print(f"🔗 {news['link']}\n")
+getLatestNews();
 ```
 
 ## 🌐 Deploy
 
-### Railway
+### Railway (1-Click Deploy)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/RSS-Feed-Analyzer)
 
-1. [Railway](https://railway.app) hesabı oluşturun
-2. GitHub repository'yi bağlayın
-3. Otomatik deploy başlayacaktır
-
-### Vercel
-
+### Manuel Deploy
 ```bash
-npm install -g vercel
+# Railway
+railway login
+railway new
+railway up
+
+# Vercel  
 vercel --prod
+
+# Docker
+docker build -t rss-feed-analyzer .
+docker run -p 3000:3000 rss-feed-analyzer
 ```
 
-### Heroku
+## 🧪 Test
 
 ```bash
-# Heroku CLI yükle ve login ol
-heroku login
+# Test suite çalıştır
+npm test
 
-# Uygulama oluştur
-heroku create rss-feed-analyzer
-
-# Deploy et
-git push heroku main
+# Tek endpoint test
+curl http://localhost:3000/api/health
 ```
 
-## 🔗 N8N Entegrasyonu
+## 🔒 Güvenlik & Rate Limiting
 
-Bu API N8N iş akışları ile entegre edilebilir:
+- **Rate Limit**: 100 request/15 dakika/IP
+- **CORS**: Cross-origin koruması
+- **Helmet**: Güvenlik headers
+- **Input Validation**: Parametre doğrulama
 
-```json
-{
-  "method": "GET",
-  "url": "https://your-api.railway.app/api/news/all?limit=20"
-}
-```
-
-## 📊 Response Formatları
-
-### Başarılı Response
+## 📊 Response Örneği
 
 ```json
 {
   "success": true,
   "company": {
-    "name": "NVIDIA Corporation",
+    "name": "NVIDIA Corporation", 
     "symbol": "NVDA",
     "sector": "semiconductor"
   },
-  "totalItems": 10,
-  "lastUpdated": "2025-08-23T10:30:00.000Z",
+  "totalItems": 5,
   "news": [
     {
-      "title": "NVIDIA Q2 Earnings Beat Expectations",
-      "link": "https://example.com/news/nvidia-earnings",
-      "description": "NVIDIA reported strong Q2 results...",
-      "pubDate": "2025-08-23T09:00:00.000Z"
+      "title": "NVIDIA Q3 Earnings Exceed Expectations",
+      "link": "https://example.com/nvidia-earnings",
+      "description": "NVIDIA reported strong quarterly results...",
+      "pubDate": "2025-08-23T10:00:00Z"
     }
   ]
 }
 ```
 
-### Hata Response
+## 🔗 N8N Entegrasyonu
 
-```json
+Bu API N8N workflow'larında kullanılabilir:
+
+```javascript
+// N8N HTTP Request Node
 {
-  "success": false,
-  "error": "Şirket bulunamadı",
-  "availableCompanies": ["nvidia", "tsmc", "ionq", "xpeng"]
+  "method": "GET",
+  "url": "https://your-app.railway.app/api/news/all?limit=20"
 }
 ```
 
-## 🔒 Güvenlik
+## 📈 Monitoring
 
-- **Rate Limiting**: 100 request/15 dakika
-- **Helmet.js**: Güvenlik headers
-- **CORS**: Cross-origin koruması
-- **Input Validation**: Parametre doğrulama
-
-## 🚨 Hata Kodları
-
-| Kod | Açıklama |
-|-----|----------|
-| 200 | Başarılı |
-| 400 | Geçersiz parametre |
-| 404 | Endpoint/şirket bulunamadı |
-| 429 | Rate limit aşıldı |
-| 500 | Sunucu hatası |
-
-## 📈 Performans
-
-- **Response Time**: ~2-5 saniye (tüm şirketler)
-- **Rate Limit**: 100 req/15 dakika
-- **Caching**: Browser cache headers
-- **Compression**: Gzip aktif
+Health check endpoint'i ile API durumunu izleyin:
+```bash
+curl http://localhost:3000/api/health
+```
 
 ## 🤝 Katkıda Bulunma
 
-1. Fork edin
-2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
-3. Commit edin (`git commit -m 'Add some AmazingFeature'`)
-4. Push edin (`git push origin feature/AmazingFeature`)
+1. Fork edin: [RSS-Feed-Analizer](https://github.com/egeaydin1/RSS-Feed-Analizer/fork)
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit edin (`git commit -m 'Add amazing feature'`)
+4. Push edin (`git push origin feature/amazing-feature`)
 5. Pull Request açın
 
-## 📝 Changelog
+## 📞 Destek & İletişim
 
-### v1.0.0 (2025-08-23)
-- ✅ İlk sürüm
-- ✅ 8 şirket desteği
-- ✅ 5 sektör kategorisi
-- ✅ RSSHub entegrasyonu
-- ✅ Docker desteği
+- 🐛 **Bug Report**: [Issues](https://github.com/egeaydin1/RSS-Feed-Analizer/issues/new?template=bug_report.md)
+- 💡 **Feature Request**: [Issues](https://github.com/egeaydin1/RSS-Feed-Analizer/issues/new?template=feature_request.md)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/egeaydin1/RSS-Feed-Analizer/discussions)
+- 📧 **Email**: Repo sahibi ile iletişim
 
-## 📞 Destek
+## 🏆 Contributors
 
-Sorularınız için:
-- 📧 Issue açın
-- 💬 Discussions kullanın
-- 📱 Telegram: @portfolio_tracker
+<a href="https://github.com/egeaydin1/RSS-Feed-Analizer/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=egeaydin1/RSS-Feed-Analizer" />
+</a>
 
 ## 📄 Lisans
 
-MIT License - detaylar için [LICENSE](LICENSE) dosyasına bakın.
+MIT License - [LICENSE](https://github.com/egeaydin1/RSS-Feed-Analizer/blob/main/LICENSE) dosyasına bakın.
 
 ---
 
-⭐ **Projeyi beğendiyseniz yıldız vermeyi unutmayın!**
+⭐ **Projeyi beğendiyseniz yıldız vermeyi unutmayın!** [⭐ Star on GitHub](https://github.com/egeaydin1/RSS-Feed-Analizer)
+
+🚀 **RSS Feed Analyzer** - Built with ❤️ for portfolio tracking
