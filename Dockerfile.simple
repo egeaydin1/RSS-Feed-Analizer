@@ -1,0 +1,18 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Package files kopyala
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --production
+
+# App files kopyala
+COPY . .
+
+# Port expose
+EXPOSE 3000
+
+# Start command
+CMD ["npm", "start"]

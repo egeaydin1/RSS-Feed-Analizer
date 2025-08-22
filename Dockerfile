@@ -5,11 +5,19 @@ WORKDIR /app
 # Dependency dosyalarını kopyala
 COPY package*.json ./
 
-# Dependencies yükle
-RUN npm ci --only=production && npm cache clean --force
+# Dependencies yükle (yeni npm syntax)
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Uygulama dosyalarını kopyala
 COPY . .
+
+# Non-root user oluştur (güvenlik için)
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Dosya sahipliğini değiştir
+RUN chown -R nodejs:nodejs /app
+USER nodejs
 
 # Port expose et
 EXPOSE 3000

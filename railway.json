@@ -1,6 +1,7 @@
+# Railway Build Configuration
 {
   "build": {
-    "builder": "DOCKERFILE"
+    "builder": "NIXPACKS"
   },
   "deploy": {
     "startCommand": "npm start",
