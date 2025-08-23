@@ -1,4 +1,3 @@
-# Railway Build Configuration
 {
   "build": {
     "builder": "NIXPACKS"
